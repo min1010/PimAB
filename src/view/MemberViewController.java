@@ -7,6 +7,9 @@ import java.util.ResourceBundle;
 import application.Main;
 import controller.MemberService;
 import controller.MemberServiceImpl;
+import controller.TestController;
+import controller.TestControllerImpl;
+import examples.TableViewTest.Person;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -24,6 +28,10 @@ public class MemberViewController implements Initializable {
 	@FXML	private Button btnRegister;
 	@FXML	private Button btnUpdate;
 	@FXML	private Button btnDelete;
+	
+	@FXML	private Button btnExecute;
+	@FXML	private TextArea taExecute;
+	@FXML	private TextField tfExecute;  //ì¶”ê°€
 	
 	@FXML	private TextField tfID;
 	@FXML	private PasswordField tfPW;
@@ -41,12 +49,21 @@ public class MemberViewController implements Initializable {
 	ArrayList<Member> memberList;
 	MemberService memberService;
 	
+	
+	TestController ts;
+	
+	
 	public MemberViewController() {
 		
 	}
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+		ts = new TestControllerImpl();
+		
+		
+		/*
 		memberService = new MemberServiceImpl();
 		
 		columnName.setCellValueFactory(cvf -> cvf.getValue().unameProperty());
@@ -55,13 +72,27 @@ public class MemberViewController implements Initializable {
 		
 		tableViewMember.getSelectionModel().selectedItemProperty().addListener(
 				(observable, oldValue, newValue) -> showMemberInfo(newValue));
-		
-		btnRegister.setOnMouseClicked(event -> handleCreate());		
+		*/
+		btnCreate.setOnMouseClicked(event -> handleCreate());		
 		// btnDelete.setOnMouseClicked(e -> handleDelete());
-		loadMemberTableView();
+		btnExecute.setOnMouseClicked(event -> handleExecute());
+		
+		//loadMemberTableView();
 	}
-	
-	private void showMemberInfo(Member member) {
+	String str = ""; //ì¸ë±ìŠ¤ ë³€ìˆ˜ - ê°ì²´ ë³€ìˆ˜ , ê°ì²´ê°€ ì¡´ìž¬í•˜ëŠ” ë™ì•ˆ ë©”ëª¨ë¦¬ì— ì¡´ìž¬
+	@FXML 
+	private void handleExecute() { // event source, listener, handler  í˜¸ì¶œ
+		str = ts.setTextArea(tfExecute.getText());
+	/*	
+	str = taExecute.getText();
+	String name = tfExecute.getText();
+	str = str + ts.appendTextArea(name);
+	*/
+	taExecute.setText(str);
+		
+		
+	}	
+private void showMemberInfo(Member member) {
 		if (member != null) {
 			tfID.setText(member.getUid());
 			tfPW.setText(member.getUpw());
@@ -83,18 +114,18 @@ public class MemberViewController implements Initializable {
 		}
 		tableViewMember.setItems(data);
 	}
-	
 	@FXML 
-	private void handleCreate() { // event source, listener, handler
-		if(tfID.getText().length() > 0) {
-			Member newMember = new Member(tfID.getText(), tfPW.getText(), tfName.getText(), tfMobilePhone.getText());
-			if(memberService.create(newMember) >= 0)	
-				data.add(newMember);
-			else
-				showAlert("ID Áßº¹À¸·Î µî·ÏÇÒ ¼ö ¾ø½À´Ï´Ù.");
-		} else
-			showAlert("ID´Â ÇÊ¼öÇ×¸ñ ÀÔ´Ï´Ù.");
+	private void handleCreate() { //event source, listener, hadler
+		if(tfID.getText().length() > 0){
+			Member newMember = new Member(tfID.getText(), tfPW.getText(), tfName.getText(),data.add(newMember);
+			tableViewMember.setItems(data);
+			
+		} else 
+			showAlert("ID ìž…ë ¥ì˜¤ë¥˜");
 	}
+	
+
+	
 	@FXML 
 	private void handleUpdate() {
 		Member newMember = new Member(tfID.getText(), tfPW.getText(), tfName.getText(), tfMobilePhone.getText());
@@ -104,7 +135,7 @@ public class MemberViewController implements Initializable {
 			tableViewMember.getItems().set(selectedIndex, newMember);
 			memberService.update(newMember);			
 		} else {
-			showAlert("¼öÁ¤À» ÇÒ ¼ö ¾ø½À´Ï´Ù.");          
+			showAlert("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");          
         }
 	}
 	
@@ -114,15 +145,15 @@ public class MemberViewController implements Initializable {
 		if (selectedIndex >= 0) {
 			memberService.delete(tableViewMember.getItems().remove(selectedIndex));			
 		} else {
-			showAlert("»èÁ¦¸¦ ÇÒ ¼ö ¾ø½À´Ï´Ù.");
+			showAlert("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
         }
 	}
 	
 	private void showAlert(String message) {
 		Alert alert = new Alert(AlertType.INFORMATION);
         alert.initOwner(mainApp.getRootStage());
-        alert.setTitle("È®ÀÎ");
-        alert.setContentText("È®ÀÎ : " + message);            
+        alert.setTitle("È®ï¿½ï¿½");
+        alert.setContentText("È®ï¿½ï¿½ : " + message);            
         alert.showAndWait();
 	}
 
